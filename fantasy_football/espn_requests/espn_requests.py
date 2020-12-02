@@ -3,7 +3,7 @@ Main communication with ESPN fantasy API
 """
 import requests
 
-from espn_requests.constants import BASE_URL
+from fantasy_football.espn_requests.constants import BASE_URL
 
 
 class ESPNRequests:

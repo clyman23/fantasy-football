@@ -21,7 +21,7 @@ class ESPNPlotter:
     def __init__(self):
         pass
 
-    def plot_team_score_analysis(self, team_scores: pd.DataFrame, team_name: str) -> None:
+    def plot_team_score_analysis(self, team_scores: pd.DataFrame, team_name: str) -> dict:
         """
         Plots team's and opponent's points compared to average
 
@@ -77,4 +77,4 @@ class ESPNPlotter:
         fig.update_xaxes(range=[-75, 75])
         fig.update_yaxes(range=[-75, 75])
 
-        fig.show()
+        return {team_name: fig}

@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
-from visualizations.espn_plotter import ESPNPlotter
-from espn_requests.espn_requests import ESPNRequests
+from fantasy_football.visualizations.espn_plotter import ESPNPlotter
+from fantasy_football.espn_requests.espn_requests import ESPNRequests
 
 
-def main():
+def main() -> dict:
     league_id = 53946782
     year = 2020
 
@@ -88,7 +88,9 @@ def main():
 
     print(avgs)
 
-    plot_all_teams(team_ids, teams_df, games_df, avgs)
+    team_plots: dict = plot_all_teams(team_ids, teams_df, games_df, avgs)
+
+    return team_plots
 
 
 def get_team_scores(
@@ -143,16 +145,20 @@ def plot_all_teams(
     teams_df: pd.DataFrame,
     games_df: pd.DataFrame,
     avgs: pd.DataFrame
-) -> None:
+) -> dict:
 
     espn_plotter = ESPNPlotter()
+
+    team_plots = {}
 
     for team_id in team_ids:
         team_scores = get_team_scores(team_ids[team_id - 1], games_df, avgs)
         team_name = teams_df.loc[team_ids[team_id - 1]]["team name"]
 
-        espn_plotter.plot_team_score_analysis(team_scores, team_name)
+        team_plots.update(espn_plotter.plot_team_score_analysis(team_scores, team_name))
+
+    return team_plots
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
