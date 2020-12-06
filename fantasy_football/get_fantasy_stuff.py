@@ -11,7 +11,7 @@ from fantasy_football.visualizations.espn_plotter import ESPNPlotter
 from fantasy_football.espn_requests.espn_requests import ESPNRequests
 
 
-def main() -> dict:
+def create_plots() -> dict:
     league_id = 53946782
     year = 2020
 
@@ -158,7 +158,3 @@ def plot_all_teams(
         team_plots.update(espn_plotter.plot_team_score_analysis(team_scores, team_name))
 
     return team_plots
-
-
-# if __name__ == "__main__":
-#     main()
