@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
+from fantasy_football.dataio.league_info import LeagueInfo
 from fantasy_football.visualizations.espn_plotter import ESPNPlotter
 from fantasy_football.espn_requests.espn_requests import ESPNRequests
 
@@ -17,76 +18,17 @@ def create_plots() -> dict:
 
     espn_requests = ESPNRequests(league_id, year)
 
-    # Get basic league info
-    basic_info = espn_requests.get_league_basic_info()
+    league_info = LeagueInfo(espn_requests)
+    league_info.set_league_basic_info()
+    league_info.set_league_matchup_info()
 
-    teams: list = basic_info["teams"]
+    team_ids = league_info.get_team_ids()
 
-    print(teams)
+    teams_df = league_info.get_teams_dataframe()
 
-    team_ids = get_team_ids(teams)
+    games_df = league_info.get_all_games_df()
 
-    print(team_ids)
-
-    teams_df: pd.DataFrame = pd.DataFrame(
-        [
-            [team["id"], f"{team['location']} {team['nickname']}", team["abbrev"]]
-            for team in teams
-        ],
-        columns=["id", "team name", "abbrev"]
-    )
-
-    teams_df.set_index("id", inplace=True, drop=True)
-
-    print("--------Teams--------")
-    print(teams_df)
-
-    # Get matchups info
-    matchups = espn_requests.get_league_matchup_info()
-
-    print(matchups.keys())
-    print(matchups["schedule"][0].keys())
-    print(matchups["teams"][0].keys())
-
-    # Get team matchups and scores
-    games_df = [
-        [
-            game['matchupPeriodId'],
-            game['home']['teamId'], game['home']['totalPoints'],
-            game['away']['teamId'], game['away']['totalPoints']
-        ]
-        for game in matchups['schedule']
-    ]
-
-    games_df = pd.DataFrame(games_df, columns=['Week', 'Team1', 'Score1', 'Team2', 'Score2'])
-    print(games_df.head())
-
-    # Get team margins of victory (or defeat)
-    df3 = games_df.assign(
-        Margin1 = games_df['Score1'] - games_df['Score2'],
-        Margin2 = games_df['Score2'] - games_df['Score1']
-    )
-
-    df3 = (
-        df3[['Week', 'Team1', 'Margin1']]
-        .rename(columns={'Team1': 'Team', 'Margin1': 'Margin'})
-        .append(df3[['Week', 'Team2', 'Margin2']]
-        .rename(columns={'Team2': 'Team', 'Margin2': 'Margin'}))
-    )
-
-    print(df3.head())
-
-    # Get league average scores by week
-    avgs = (
-        games_df
-        .filter(['Week', 'Score1', 'Score2'])
-        .melt(id_vars=['Week'], value_name='Score')
-        .groupby('Week')
-        .mean()
-        .reset_index()
-    )
-
-    print(avgs)
+    avgs = league_info.get_weekly_average_score()
 
     team_plots: dict = plot_all_teams(team_ids, teams_df, games_df, avgs)
 
