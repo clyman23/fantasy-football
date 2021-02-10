@@ -1,5 +1,8 @@
 __pycache__/
 venv/
+env/
 .vscode/
 .DS_Store
 *.csv
+*.ipynb
+

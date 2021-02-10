@@ -23,8 +23,8 @@ class Dashboard:
     Methods:
         build_app (None): Builds the dashboard
     """
-    def __init__(self, team_plots: list):
-        self._team_plots: list = team_plots
+    def __init__(self, team_plots: dict):
+        self._team_plots: dict = team_plots
 
         self.external_stylesheets: list = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
         self.app: dash.Dash = dash.Dash(__name__, external_stylesheets=self.external_stylesheets)
@@ -42,6 +42,7 @@ class Dashboard:
             None
         """
         self._build_title()
+        self._build_league_standings_table()
         self._build_team_luckiness_children()
 
         self.app.layout = html.Div(style={}, children=self.app_children)
@@ -64,6 +65,13 @@ class Dashboard:
                     "textAlign": "center",
                 }
             )
+        )
+
+    def _build_league_standings_table(self) -> None:
+        self.app_children.append(
+            html.Div([
+                self._team_plots["standings"]
+            ])
         )
 
     def _build_team_luckiness_children(self) -> None:
@@ -99,4 +107,4 @@ class Dashboard:
             Input(component_id='my-input', component_property='value')
         ) # pylint: disable=W0612
         def update_output_div(input_value: str) -> go.Figure:
-            return self._team_plots[input_value]
+            return self._team_plots["luckiness_plots"][input_value]
