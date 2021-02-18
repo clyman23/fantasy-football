@@ -3,8 +3,10 @@
 # https://github.com/cwendt94/espn-api
 # http://espn-fantasy-football-api.s3-website.us-east-2.amazonaws.com/
 
+import dash_table
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.graph_objects as go
 import requests
 
 from fantasy_football.dataio.league_info import LeagueInfo
@@ -30,9 +32,15 @@ def create_plots() -> dict:
 
     avgs = league_info.get_weekly_average_score()
 
-    team_plots: dict = plot_all_teams(team_ids, teams_df, games_df, avgs)
+    all_teams_total_wins = league_info.get_all_teams_total_wins()
 
-    return team_plots
+    figures = {}
+
+    figures.update(tabulate_league_standings(league_info, team_ids, all_teams_total_wins))
+
+    figures.update(plot_all_teams(team_ids, teams_df, games_df, avgs))
+
+    return figures
 
 
 def get_team_scores(
@@ -82,6 +90,36 @@ def get_team_ids(teams: list) -> list:
     return [team["id"] for team in teams]
 
 
+def tabulate_league_standings(
+    league_info: LeagueInfo,
+    team_ids: list,
+    all_teams_total_wins: pd.Series
+) -> dict:
+    sorted_total_wins = all_teams_total_wins.sort_values(ascending=False)
+
+    total_games = 15
+
+    sorted_total_losses = total_games - sorted_total_wins
+
+    sorted_total_win_losses = pd.DataFrame(
+        {"Wins": sorted_total_wins, "Losses": sorted_total_losses}
+    )
+
+    team_names = {
+        team_id: league_info.get_team_name_by_id(team_id) for team_id in sorted_total_win_losses.index
+    }
+
+    sorted_total_win_losses["Team Name"] = pd.Series(team_names, index=sorted_total_win_losses.index)
+    sorted_total_win_losses.fillna("No Name", inplace=True)
+
+    data_table = dash_table.DataTable(
+        columns=[{"name": i, "id": i} for i in sorted_total_win_losses.columns],
+        data=sorted_total_win_losses.to_dict("records")
+    )
+
+    return {"standings": data_table}
+
+
 def plot_all_teams(
     team_ids: list,
     teams_df: pd.DataFrame,
@@ -99,4 +137,4 @@ def plot_all_teams(
 
         team_plots.update(espn_plotter.plot_team_score_analysis(team_scores, team_name))
 
-    return team_plots
+    return {"luckiness_plots": team_plots}
