@@ -4,5 +4,4 @@ env/
 .vscode/
 .DS_Store
 *.csv
-*.ipynb
-
+.ipynb_checkpoints

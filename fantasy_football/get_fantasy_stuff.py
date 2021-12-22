@@ -14,9 +14,9 @@ from fantasy_football.visualizations.espn_plotter import ESPNPlotter
 from fantasy_football.espn_requests.espn_requests import ESPNRequests
 
 
-def create_plots() -> dict:
-    league_id = 53946782
-    year = 2020
+def main():
+    league_id = 1117278137
+    year = 2021
 
     espn_requests = ESPNRequests(league_id, year)
 
