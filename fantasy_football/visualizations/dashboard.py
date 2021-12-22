@@ -2,8 +2,8 @@
 Contains class to create plotly dashboard
 """
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 
@@ -80,21 +80,19 @@ class Dashboard:
 
             dcc.Dropdown(
                 options=[
-                    {"label": "Quentin Quarantino", "value": "Quentin Quarantino"},
-                    {"label": "Walk into the Room Ertz First", "value": "Walk into the Room Ertz First"},
-                    {"label": "What’s In A Name?", "value": "What’s In A Name?"},
-                    {"label": "Ladies And Edelman", "value": "Ladies And Edelman"},
-                    {"label": "Upstate Billivers",  "value": "Upstate Billivers"},
-                    {"label": "Cleveland Baker's Boys", "value": "Cleveland Baker's Boys"},
-                    {"label": "Watt Are Passes?", "value": "Watt Are Passes?"},
+                    {"label": "Hips Don't Eli", "value": "Hips Don't Eli"},
+                    {"label": "Ertz First", "value": "Ertz First"},
+                    {"label": "Toots Town Tacklers", "value": "Toots Town Tacklers"},
+                    {"label": "Country Road Take Mahomes", "value": "Country Road Take Mahomes"},
+                    {"label": "Mana'Saquon Godwin",  "value": "Mana'Saquon Godwin"},
+                    {"label": "Rudolph The Red Zone Reindeer", "value": "Rudolph The Red Zone Reindeer"},
+                    {"label": "Taylor’s Titans", "value": "Taylor’s Titans"},
                     {"label": "Hail Mary", "value": "Hail Mary"},
-                    {"label": "Daniel Joe 4 Danny Jones!!!", "value": "Daniel Joe 4 Danny Jones!!!"},
-                    {"label": "UES Stumble WINN", "value": "UES Stumble WINN"},
-                    {"label": "Cooper Troopers", "value": "Cooper Troopers"},
-                    {"label": "Taylor Gang", "value": "Taylor Gang"},
+                    {"label": "DB's TD's", "value": "DB's TD's"},
+                    {"label": "Masi's Mannings", "value": "Masi's Mannings"},
                 ],
-                value='Quentin Quarantino',
-                id='my-input',
+                value="Hips Don't Eli",
+                id="my-input",
             ),
 
             dcc.Graph(
