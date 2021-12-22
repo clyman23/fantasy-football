@@ -1,20 +1,29 @@
+"""
+Get fantasy football "stuff"
+"""
 # Some sources
 # https://stmorse.github.io/journal/espn-fantasy-v3.html
 # https://github.com/cwendt94/espn-api
 # http://espn-fantasy-football-api.s3-website.us-east-2.amazonaws.com/
 
-import dash_table
-import matplotlib.pyplot as plt
+from dash import dash_table
 import pandas as pd
-import plotly.graph_objects as go
-import requests
 
 from fantasy_football.dataio.league_info import LeagueInfo
 from fantasy_football.visualizations.espn_plotter import ESPNPlotter
 from fantasy_football.espn_requests.espn_requests import ESPNRequests
 
 
-def main():
+def get_all_league_info() -> dict:
+    """
+    Main function for getting fantasy league information
+
+    Args:
+        None
+
+    Returns:
+        dict: Dictionary of plots
+    """
     league_id = 1117278137
     year = 2021
 

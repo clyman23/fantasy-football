@@ -1,18 +1,21 @@
 """
 Creates plotly dashboard
 """
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.dependencies import Input, Output
-import pandas as pd
+# import dash
+# from dash import dcc
+# from dash import html
+# from dash.dependencies import Input, Output
+# import pandas as pd
 
-from fantasy_football.get_fantasy_stuff import create_plots
+from fantasy_football.get_fantasy_stuff import get_all_league_info
 from fantasy_football.visualizations.dashboard import Dashboard
 
 
 def main():
-    team_plots = create_plots()
+    """
+    Main function for creating dashboards manually
+    """
+    team_plots = get_all_league_info()
     dashboard = Dashboard(team_plots)
     dashboard.build_app()
 
