@@ -5,7 +5,9 @@ Tool for garnering insights from an ESPN fantasy football season.
 Currently hard-coded for Team ID `53946782` and only supports current, in-progress seasons.
 
 ## Dependencies
-See `requirements.txt`
+Developed using `python==3.9.7`.
+
+See `requirements.txt` for package requirements.
 
 ## Running tool
 1. Install dependencies 
