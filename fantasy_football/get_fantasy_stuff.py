@@ -9,9 +9,9 @@ Get fantasy football "stuff"
 from dash import dash_table
 import pandas as pd
 
-from fantasy_football.dataio.league_info import LeagueInfo
 from fantasy_football.visualizations.espn_plotter import ESPNPlotter
-from fantasy_football.espn_requests.espn_requests import ESPNRequests
+from fantasy_football.espn_requests.basic_info import BasicInfo
+from fantasy_football.espn_requests.matchup_info import MatchupInfo
 
 
 def get_all_league_info() -> dict:
@@ -27,25 +27,25 @@ def get_all_league_info() -> dict:
     league_id = 1117278137
     year = 2021
 
-    espn_requests = ESPNRequests(league_id, year)
+    basic_info = BasicInfo(league_id, year)
+    matchup_info = MatchupInfo(league_id, year)
 
-    league_info = LeagueInfo(espn_requests)
-    league_info.set_league_basic_info()
-    league_info.set_league_matchup_info()
+    basic_info.get_league_basic_info()
+    matchup_info.get_league_matchup_info()
 
-    team_ids = league_info.get_team_ids()
+    team_ids = basic_info.get_team_ids()
 
-    teams_df = league_info.get_teams_dataframe()
+    teams_df = basic_info.get_teams_dataframe()
 
-    games_df = league_info.get_all_games_df()
+    games_df = matchup_info.get_all_games_df()
 
-    avgs = league_info.get_weekly_average_score()
+    avgs = matchup_info.get_weekly_average_score()
 
-    all_teams_total_wins = league_info.get_all_teams_total_wins()
+    all_teams_total_wins = matchup_info.get_all_teams_total_wins()
 
     figures = {}
 
-    figures.update(tabulate_league_standings(league_info, team_ids, all_teams_total_wins))
+    figures.update(tabulate_league_standings(basic_info, team_ids, all_teams_total_wins))
 
     figures.update(plot_all_teams(team_ids, teams_df, games_df, avgs))
 
@@ -100,7 +100,7 @@ def get_team_ids(teams: list) -> list:
 
 
 def tabulate_league_standings(
-    league_info: LeagueInfo,
+    basic_info: BasicInfo,
     team_ids: list,
     all_teams_total_wins: pd.Series
 ) -> dict:
@@ -115,7 +115,7 @@ def tabulate_league_standings(
     )
 
     team_names = {
-        team_id: league_info.get_team_name_by_id(team_id) for team_id in sorted_total_win_losses.index
+        team_id: basic_info.get_team_name_by_id(team_id) for team_id in sorted_total_win_losses.index
     }
 
     sorted_total_win_losses["Team Name"] = pd.Series(team_names, index=sorted_total_win_losses.index)
