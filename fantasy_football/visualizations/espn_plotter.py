@@ -78,3 +78,43 @@ class ESPNPlotter:
         fig.update_yaxes(range=[-75, 75])
 
         return {team_name: fig}
+
+    def plot_team_total_scores(self, team_scores: pd.DataFrame, team_name: str) -> dict:
+        """
+        Plot a team's weekly score
+
+        Args:
+            team_scores (pd.DataFrame): DataFrame of a team's scores, by matchup (week)
+            team_name (str): The name of the team to be plotted
+
+        Outputs:
+            dict: Dictionary of team name mapped to a plotly figure
+        """
+        # Filter out weeks that haven't been played yet
+        team_scores = team_scores[team_scores["Score1"]!=0]
+
+        week = team_scores["Week"]
+        score = team_scores["Score1"]
+
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(
+            x=week,
+            y=score,
+            name="Team Weekly Score"
+        ))
+
+        fig.add_trace(go.Scatter(
+            x=week,
+            y=team_scores["Avg"],
+            line={"dash": "dash"},
+            name="League Average Weekly Score"
+        ))
+
+        fig.update_layout(
+            title="{} Weekly Points".format(team_name),
+            xaxis_title="Week",
+            yaxis_title="Points Scored"
+        )
+
+        return {team_name: fig}

@@ -23,8 +23,9 @@ class Dashboard:
     Methods:
         build_app (None): Builds the dashboard
     """
-    def __init__(self, team_plots: dict):
+    def __init__(self, team_plots: dict, team_names: list):
         self._team_plots: dict = team_plots
+        self._team_names: list = team_names
 
         self.external_stylesheets: list = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
         self.app: dash.Dash = dash.Dash(__name__, external_stylesheets=self.external_stylesheets)
@@ -80,29 +81,32 @@ class Dashboard:
 
             dcc.Dropdown(
                 options=[
-                    {"label": "Hips Don't Eli", "value": "Hips Don't Eli"},
-                    {"label": "Ertz First", "value": "Ertz First"},
-                    {"label": "Toots Town Tacklers", "value": "Toots Town Tacklers"},
-                    {"label": "Country Road Take Mahomes", "value": "Country Road Take Mahomes"},
-                    {"label": "Mana'Saquon Godwin",  "value": "Mana'Saquon Godwin"},
-                    {"label": "Rudolph The Red Zone Reindeer", "value": "Rudolph The Red Zone Reindeer"},
-                    {"label": "Taylor’s Titans", "value": "Taylor’s Titans"},
-                    {"label": "Hail Mary", "value": "Hail Mary"},
-                    {"label": "DB's TD's", "value": "DB's TD's"},
-                    {"label": "Masi's Mannings", "value": "Masi's Mannings"},
+                    {
+                        "label": i["location"] + " " + i["nickname"],
+                        "value": i["location"] + " " + i["nickname"]
+                    }
+                    for i in self._team_names
                 ],
-                value="Hips Don't Eli",
+                value=self._team_names[0]["location"] + " " + self._team_names[0]["nickname"],
                 id="my-input",
             ),
 
             dcc.Graph(
+                id='team-scores',
+            ),
+
+            dcc.Graph(
                 id='team-graph',
-            )
+            ),
         ])
 
         @self.app.callback(
             Output(component_id='team-graph', component_property='figure'),
+            Output(component_id='team-scores', component_property='figure'),
             Input(component_id='my-input', component_property='value')
         ) # pylint: disable=W0612
         def update_output_div(input_value: str) -> go.Figure:
-            return self._team_plots["luckiness_plots"][input_value]
+            luckiness_plot = self._team_plots["luckiness_plots"][input_value]
+            team_points_plot = self._team_plots["team_points_plots"][input_value]
+
+            return luckiness_plot, team_points_plot

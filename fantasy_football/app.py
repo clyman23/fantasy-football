@@ -15,8 +15,8 @@ def main():
     """
     Main function for creating dashboards manually
     """
-    team_plots = get_all_league_info()
-    dashboard = Dashboard(team_plots)
+    team_plots, team_names = get_all_league_info()
+    dashboard = Dashboard(team_plots, team_names)
     dashboard.build_app()
 
 
