@@ -49,7 +49,9 @@ def get_all_league_info() -> dict:
 
     figures.update(plot_all_teams(team_ids, teams_df, games_df, avgs))
 
-    return figures
+    team_names = basic_info.get_basic_teams_list()
+
+    return figures, team_names
 
 
 def get_team_scores(
@@ -80,7 +82,8 @@ def get_team_scores(
     team_games_df = team_games_df.assign(
         Chg1 = team_games_df['Score1'] - avg_scores['Score'],
         Chg2 = team_games_df['Score2'] - avg_scores['Score'],
-        Win  = team_games_df['Score1'] > team_games_df['Score2']
+        Win  = team_games_df['Score1'] > team_games_df['Score2'],
+        Avg = avg_scores["Score"]
     )
 
     return team_games_df
@@ -135,15 +138,29 @@ def plot_all_teams(
     games_df: pd.DataFrame,
     avgs: pd.DataFrame
 ) -> dict:
+    """
+    Create plots for all the teams in the league
+
+    Args:
+        team_ids (list): List of team IDs
+        teams_df (pd.DataFrame): DataFrame of team information
+        games_df (pd.DataFrame): DataFrame of all game information
+        avgs (pd.DataFrame): DataFrame of average weekly league scores
+
+    Returns:
+        dict: Dictionry of plots
+    """
 
     espn_plotter = ESPNPlotter()
 
-    team_plots = {}
+    luckiness_plots = {}
+    team_points_plots = {}
 
     for team_id in team_ids:
         team_scores = get_team_scores(team_ids[team_id - 1], games_df, avgs)
         team_name = teams_df.loc[team_ids[team_id - 1]]["team name"]
 
-        team_plots.update(espn_plotter.plot_team_score_analysis(team_scores, team_name))
+        luckiness_plots.update(espn_plotter.plot_team_score_analysis(team_scores, team_name))
+        team_points_plots.update(espn_plotter.plot_team_total_scores(team_scores, team_name))
 
-    return {"luckiness_plots": team_plots}
+    return {"luckiness_plots": luckiness_plots, "team_points_plots": team_points_plots}
